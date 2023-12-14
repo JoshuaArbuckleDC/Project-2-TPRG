@@ -1,0 +1,26 @@
+import socket
+import tkinter as tk
+import json
+import threading
+
+# Create a GUI window for server status
+def create_gui():
+    # Create the main window
+    root = tk.Tk()
+    root.title("Server Status")
+
+    # Label to display connection status
+    connection_label = tk.Label(root, text="Not Connected", fg="red")
+    connection_label.pack()
+
+    # LED-like label for visual indication
+    led_label = tk.Label(root, text="\u25A0", font=("Arial", 24), fg="red")  # Unicode LED character
+    led_label.pack()
+
+    # Label to display iteration count
+    iteration_label = tk.Label(root, text="Iteration Count: 0", fg="black")
+    iteration_label.pack()
+
+    # Exit button to close the application
+    exit_button = tk.Button(root, text="Exit", command=root.quit)
+    exit_button.pack()
