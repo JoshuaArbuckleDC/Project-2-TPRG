@@ -1,0 +1,19 @@
+import socket
+import os
+import json
+import time
+import tkinter as tk
+
+# Function to retrieve system information
+def get_system_info():
+    core_temp = os.popen('vcgencmd measure_temp').readline().strip()[5:]
+    voltage = os.popen('vcgencmd measure_volts').readline().strip()
+    arm_clock_freq = os.popen('vcgencmd measure_clock arm').readline().strip()[14:]
+    disk_usage = os.popen('df -h /').readlines()[1].split()[4]
+    gpu_temp = os.popen('vcgencmd measure_temp').readline().strip()[5:]  # Get GPU temperature
+    return {
+        "Core Temperature": core_temp,
+        "Voltage": voltage,
+        "ARM Clock Frequency": arm_clock_freq,
+        "Disk Usage": disk_usage,
+        "GPU Temperature": gpu_temp
