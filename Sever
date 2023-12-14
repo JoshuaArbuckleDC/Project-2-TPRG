@@ -65,3 +65,50 @@ def receive_data_from_client(client_socket, connection_label, led_label, iterati
             gpu_temp_label.config(text=f"GPU Temperature: {gpu_temp}")
 
             iteration_label.config(text=f"Iteration Count: {iteration_count}")
+
+# Toggle LED label color for visual feedback
+            if iteration_count % 2 == 0:
+                led_label.config(fg="red")
+            else:
+                led_label.config(fg="green")
+            iteration_count += 1
+
+        except Exception as e:
+            # Handle any exceptions while receiving data
+            print(f"Error receiving data: {str(e)}")
+            led_label.config(fg="red")
+            break
+
+    # Update the connection status label when the client disconnects
+    connection_label.config(text="Disconnected", fg="red")
+
+# Main function to run the server and GUI
+def main():
+    host = '192.168.2.30'  # Server IP address
+    port = 5005
+
+    # Create a socket for the server
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind((host, port))
+    server_socket.listen(1)
+
+    # Create the GUI window
+    root, connection_label, led_label, iteration_label, voltage_label, arm_clock_freq_label, core_temp_label, disk_usage_label, gpu_temp_label = create_gui()
+
+    print("Waiting for a connection...")
+    connection_label.config(text="Waiting for a connection...", fg="orange")
+
+    # Accept a client connection
+    client_socket, addr = server_socket.accept()
+    print(f"Connection from {addr}")
+    connection_label.config(text=f"Connected to {addr}", fg="green")
+
+    # Start a thread to receive data from the client and update the GUI
+    data_thread = threading.Thread(target=receive_data_from_client, args=(client_socket, connection_label, led_label, iteration_label, voltage_label, arm_clock_freq_label, core_temp_label, disk_usage_label, gpu_temp_label))
+    data_thread.start()
+
+    # Run the GUI main loop
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()
