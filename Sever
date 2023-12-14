@@ -24,3 +24,44 @@ def create_gui():
     # Exit button to close the application
     exit_button = tk.Button(root, text="Exit", command=root.quit)
     exit_button.pack()
+
+    # Labels to display various system metrics
+    voltage_label = tk.Label(root, text="", fg="black")
+    voltage_label.pack()
+    arm_clock_freq_label = tk.Label(root, text="", fg="black")
+    arm_clock_freq_label.pack()
+    core_temp_label = tk.Label(root, text="", fg="black")
+    core_temp_label.pack()
+    disk_usage_label = tk.Label(root, text="", fg="black")
+    disk_usage_label.pack()
+    gpu_temp_label = tk.Label(root, text="", fg="black")
+    gpu_temp_label.pack()
+
+    return root, connection_label, led_label, iteration_label, voltage_label, arm_clock_freq_label, core_temp_label, disk_usage_label, gpu_temp_label
+
+# Function to receive data from the client socket and update the GUI
+def receive_data_from_client(client_socket, connection_label, led_label, iteration_label, voltage_label, arm_clock_freq_label, core_temp_label, disk_usage_label, gpu_temp_label):
+    iteration_count = 0
+    while True:
+        try:
+            # Receive and decode JSON data from the client
+            data = client_socket.recv(4096).decode('utf-8')
+            if not data:
+                break
+            data_dict = json.loads(data)
+
+            # Extract system metrics from the received data
+            voltage = data_dict.get("Voltage", "")
+            arm_clock_freq = data_dict.get("ARM Clock Frequency", "")
+            core_temp = data_dict.get("Core Temperature", "")
+            disk_usage = data_dict.get("Disk Usage", "")
+            gpu_temp = data_dict.get("GPU Temperature", "")
+
+            # Update the GUI labels with the received metrics
+            voltage_label.config(text=f"Voltage: {voltage}")
+            arm_clock_freq_label.config(text=f"ARM Clock Frequency: {arm_clock_freq}")
+            core_temp_label.config(text=f"Core Temperature: {core_temp}")
+            disk_usage_label.config(text=f"Disk Usage: {disk_usage}")
+            gpu_temp_label.config(text=f"GPU Temperature: {gpu_temp}")
+
+            iteration_label.config(text=f"Iteration Count: {iteration_count}")
