@@ -36,3 +36,39 @@ def send_data_to_server(data, server_socket):
     except Exception as e:
         print(f"Error sending data: {str(e)}")
         return False
+
+# Main function to run the client
+def main():
+    host = '192.168.2.30'  # Server IP address
+    port = 5005
+    iteration_count = 0
+
+    # Create a GUI window for connection status
+    root = tk.Tk()
+    root.title("Client Status")
+    connection_label = tk.Label(root, text="Not Connected", fg="red")
+    connection_label.pack()
+
+    # Create a socket and connect to the server
+    s = socket.socket()
+    try:
+        s.connect((host, port))
+        connection_label.config(text="Connected", fg="green")
+    except ConnectionRefusedError:
+        print("Error: Server is not running.")
+        connection_label.config(text="Error: Server not running", fg="red")
+        return
+
+    # Send data to the server in a loop
+    while iteration_count < 51:
+        data = create_data_packet(iteration_count)
+        if send_data_to_server(data, s):
+            iteration_count += 1
+            time.sleep(2)  # Sample data every 2 seconds
+
+    # Close the socket and destroy the GUI window
+    s.close()
+    root.destroy()
+
+if __name__ == "__main__":
+    main()
